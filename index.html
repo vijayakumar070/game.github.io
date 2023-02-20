@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title>Guessing Game</title>
+</head>
+<body style=" background-color: gray;">
+	 <center><h1>Guessing Number Game</h1>
+	<label for="name">Enter your name:</label>
+	<input type="text" id="name">
+	<button onclick="startGame()">Start Game</button>
+
+	<div id="gameArea" style="display: none">
+		<p>Guess a four-digit number:</p>
+		<input type="text" id="guess">
+		<button onclick="submitGuess()">Submit Guess</button>
+		<p id="result"></p>
+		<p id="guesses"></p>
+	</div>
+    </center>
+
+	<script>
+        let number, guesses;
+
+function startGame() {
+	// Get the user's name
+	const name = document.getElementById("name").value;
+	alert(`Hello, ${name}! Let's play a guessing game.`);
+
+	// Generate a random four-digit number with no duplicates
+	const digits = Array.from({ length: 10 }, (_, i) => i);
+	shuffle(digits);
+	number = digits.slice(0, 4);
+
+	// Initialize the number of guesses to 0
+	guesses = 0;
+
+	// Show the game area
+	document.getElementById("gameArea").style.display = "block";
+}
+
+function submitGuess() {
+	// Get the user's guess
+	const guess = document.getElementById("guess").value;
+	if (guess.length !== 4 || !/^\d{4}$/.test(guess)) {
+		alert("Please enter a four-digit number.");
+		return;
+	}
+	guesses++;
+
+	// Compare the guess to the computer's number
+	let correctDigits = 0;
+	let correctPositions = 0;
+
+	for (let i = 0; i < 4; i++) {
+		if (parseInt(guess[i]) === number[i]) {
+			correctPositions++;
+		} else if (number.includes(parseInt(guess[i]))) {
+			correctDigits++;
+		}
+	}
+
+	// Display the results of the comparison to the user
+	const result = "+".repeat(correctPositions) + "-".repeat(correctDigits) + "*".repeat(4 - correctPositions - correctDigits);
+	document.getElementById("result").textContent = result;
+
+	// If the guess is correct, end the game
+	if (guess === number.join("")) {
+		document.getElementById("guesses").textContent = `Congratulations, you guessed the number in ${guesses} guesses!`;
+		document.getElementById("gameArea").style.display = "none";
+		// Save the score to a database or localStorage
+	}
+}
+
+function shuffle(array) {
+	for (let i = array.length - 1; i > 0; i--) {
+		const j = Math.floor(Math.random() * (i + 1));
+		[array[i], array[j]] = [array[j], array[i]];
+	}
+}
+
+    </script>
+</body>
+</html>
